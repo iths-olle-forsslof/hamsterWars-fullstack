@@ -13,6 +13,7 @@
 
 # files
 service_account.json
+/assets
 
 # misc
 .DS_Store
