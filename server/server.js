@@ -4,9 +4,10 @@ const app = express();
 
 const serverPort = process.env.PORT || 3002
 
-app.use(express.static(__dirname + '/../build'));
-app.use(express.static('public'));
 app.use(express.json());
+app.use(express.static(__dirname + '/../build'));
+
+// app.use(express.static('public'));
 
 const hamstersRoute = require('./routes/hamsters');
 app.use('/api/hamsters', hamstersRoute);

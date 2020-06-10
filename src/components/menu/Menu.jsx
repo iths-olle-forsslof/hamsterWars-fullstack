@@ -1,14 +1,14 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import {NavLink} from 'react-router-dom';
 import './Menu.css'
 import styled from 'styled-components';
 import HamburgerIcon from './HamburgerIcon';
 
-const Menu = ({menuSize, handleMenuSize}) => {
+const Menu = () => {
 
     return (
     <HeaderLayout>
-        <Logo><h1>HAMSTER WARS</h1></Logo>
+        <Logo><h2>HAMSTER WARS</h2></Logo>
         <HamburgerIcon />
         <NavLayout>
             <ul>
@@ -24,12 +24,12 @@ const Menu = ({menuSize, handleMenuSize}) => {
                 </NavLink>
                 <NavLink to="/history">
                     <li>
-                    Historic Hamster Battles
+                    History
                     </li>
                 </NavLink>
                 <NavLink to="/upload">
                     <li>
-                    Upload a Hamster Warrior
+                    Upload
                     </li>
                 </NavLink>
             </ul>
@@ -43,11 +43,11 @@ const HeaderLayout = styled.div`
     background-color: var(--menu-background);
     text-align: center;
     width: 100%;
-    position: fixed;
+    position: relative;
 
     @media(min-width: 768px) {
         display: grid;
-        grid-template-columns: 1fr auto 1fr 1fr; 
+        grid-template-columns: 1fr auto minmax(500px, 3fr) 1fr;
     }
 `
 const NavLayout = styled.nav`
@@ -67,7 +67,9 @@ const NavLayout = styled.nav`
         list-style: none;
         
         & li {
+            font-size: .8em;
             margin: 0 0 1em 1em;
+            /* padding: 1em; */
             opacity: 0;
             transition: opacity .1s ease-in;
             
@@ -88,56 +90,27 @@ const NavLayout = styled.nav`
     @media(min-width: 768px) {
         position: relative;
         display: flex;
-        justify-content: center;
+        justify-content: flex-end;
         transform: scale(1, 1);
         text-align: center;
         top: initial;
         left: initial;
+        grid-column: 3 / 4;
         
         & ul {
             display: flex;
+            align-items: center;
 
             & li {
                 opacity: 1;
+                margin: 0 0 0 1.5em;
             }
         }
     }
 `
-
 const Logo = styled.div`
     grid-column: 2 / 3;
-`
-
-const MenuLink = styled.div`
-    background-color: hotpink;
+    padding: 1em;
 `
 
 export default Menu
-
-    // <section className={'menu ' + menuSize } >
-    //     <NavLink to="/" > <h1 onClick={() => handleMenuSize('home')} >HAMSTER WARS</h1> </NavLink>
-    //     <nav>
-    //         <ul>
-    //             <li>
-    //                 <NavLink to="/battle"
-    //                  activeClassName="activeLink"
-    //                  onClick={handleMenuSize} >Battle</NavLink>
-    //             </li>
-    //             <li>
-    //                 <NavLink to="/stats" 
-    //                 activeClassName="activeLink"
-    //                 onClick={handleMenuSize} >HamsterWars Statistics</NavLink>
-    //             </li>
-    //             <li>
-    //                 <NavLink to="/history" 
-    //                 activeClassName="activeLink" 
-    //                 onClick={handleMenuSize} >Historic Battles</NavLink>
-    //             </li>
-    //             <li>
-    //                 <NavLink to="/upload" 
-    //                 activeClassName="activeLink"
-    //                 onClick={handleMenuSize} >Upload Hamster Warrior</NavLink>
-    //             </li>
-    //         </ul>
-    //     </nav>
-    // </section>

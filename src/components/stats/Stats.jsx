@@ -3,7 +3,8 @@ import React from 'react';
 const Stats = () => {
     return (
         <div>
-            STATISTICS PAGE
+
+            <h1>STATISTICS PAGE</h1>
         </div>
     )
 }

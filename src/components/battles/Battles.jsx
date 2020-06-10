@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import styled from 'styled-components'
+import HamsterCard from './HamsterCard'
 
 const Battles = () => {
 
-    const [hamsters, setHamsters] = useState()
+    const [hamster1, setHamster1] = useState()
+    const [hamster2, setHamster2] = useState()
 
     const handleClick = async () => {
         const arr = await getHamsterTest()
@@ -16,6 +18,9 @@ const Battles = () => {
             <h1>
             BATTLE Section
             </h1>
+
+            <HamsterCard hamster={hamsters} />
+
             <p> 
                 <button onClick={handleClick} >Get random hamster</button>
             </p>
@@ -45,11 +50,10 @@ async function getHamsterTest() {
 }
 
 const StyledMain = styled.main`
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: auto 1fr 1fr auto;
     background-color: lightcoral;
-    height: 500px;
+    height: 100%;
     background-color: green;
 `;
 
