@@ -38,6 +38,6 @@
     ]
   },
   "devDependencies": {
-    "babel-plugin-styled-components": "^1.10.7",
+    "babel-plugin-styled-components": "^1.10.7"
   }
 }
