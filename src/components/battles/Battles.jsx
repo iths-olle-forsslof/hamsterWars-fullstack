@@ -46,11 +46,12 @@ const Battles = () => {
    
     return (
         <StyledMain>
-            <StyledContainer>
-
             <StyledH1>
                 BATTLE Section
             </StyledH1>
+
+            <StyledBattleContainer>
+
             {hamster1 && hamster1Img
                 ? <StyledCardPlacer>
                         <HamsterCard hamster={hamster1} hamsterImg={hamster1Img ? hamster1Img : null} />
@@ -64,36 +65,42 @@ const Battles = () => {
                     </StyledCardPlacer>
                 : null 
             }
-            </StyledContainer>
+            </StyledBattleContainer>
         </StyledMain>
     )
 }
 
 const StyledMain = styled.main`
     display: grid;
-    grid-template-columns: 1fr 80vw 1fr;
-    grid-template-rows: 1fr 45vh 5em auto;
+    grid-template-columns: 1fr 90vw 1fr;
+    grid-template-rows: [header-start] 1fr [battle-start] 5fr 5em auto;
     background-color: lightcoral;
     height: 100%;
     background-color: grey;
 `;
 
-const StyledContainer = styled.div`
+const StyledBattleContainer = styled.div`
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+    grid-row: battle-start / 3;
     grid-column: 2 / 3;
+
+    @media (min-width: 800px) {
+        flex-direction: row;
+    }
 `
 
 const StyledH1 = styled.h1`
     display: flex;
     justify-content: center;
+    grid-row: header-start / battle-start;
     grid-column: 2 / 3;
-`
+    `
 
 const StyledCardPlacer = styled.div`
     display: flex;
-    grid-column: 2 / 3;
 
 `
 

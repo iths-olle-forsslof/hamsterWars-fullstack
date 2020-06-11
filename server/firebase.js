@@ -1,12 +1,14 @@
 var admin = require("firebase-admin");
 require('dotenv').config()
 // var serviceAccount = require("./service_account.json");
+var serviceAccount = {
+  "project_id": process.env.FIREBASE_PROJECT_ID,
+  "private_key": process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+  "client_email": process.env.FIREBASE_CLIENT_EMAIL,
+}
 
 admin.initializeApp({
-  credential: admin.credential.cert({
-    "private_key": process.env.FIREBASE_PRIVATE_KEY,
-    "client_email": process.env.FIREBASE_CLIENT_EMAIL,
-  }),
+  credential: admin.credential.cert(serviceAccount),
   databaseURL: "https://hamster-wars.firebaseio.com",
   storageBucket: "hamster-wars.appspot.com"
 });
