@@ -1,60 +1,100 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components'
 import HamsterCard from './HamsterCard'
+import {getHamster, getHamsterImg} from './battleFunctions'
 
 const Battles = () => {
+    const [hamster1, setHamster1] = useState({})
+    const [hamster1Img, setHamster1Img] = useState({})
+    const [hamster2, setHamster2] = useState({})
+    const [hamster2Img, setHamster2Img] = useState({})
 
-    const [hamster1, setHamster1] = useState()
-    const [hamster2, setHamster2] = useState()
+    // Hamster1
+    useEffect(() => {
+        const fetchData = async () => { 
+            const result = await getHamster()
+            setHamster1(result)
+        }
+        fetchData();
+    }, [])
 
-    const handleClick = async () => {
-        const arr = await getHamsterTest()
-        console.log( 'arr i handleClick: ', arr)
-        setHamsters([arr])
-    }
-
+    useEffect(() => {
+        const fetchImg = async () => {
+            const imgURL = await getHamsterImg(hamster1.imgName)
+            setHamster1Img(imgURL)
+        }
+        fetchImg();
+    }, [hamster1])
+    
+    //Hamster2
+    useEffect(() => {
+        const fetchData = async () => { 
+            const result = await getHamster()
+            setHamster2(result)
+        }
+        fetchData();
+    }, [])
+    
+    useEffect(() => {
+        const fetchImg = async () => {
+            const imgURL = await getHamsterImg(hamster2.imgName)
+            setHamster2Img(imgURL)
+        }
+        fetchImg();
+    }, [hamster2])
+    // Fetches the image that corresponds with the hamster
+   
     return (
         <StyledMain>
-            <h1>
-            BATTLE Section
-            </h1>
+            <StyledContainer>
 
-            <HamsterCard hamster={hamsters} />
-
-            <p> 
-                <button onClick={handleClick} >Get random hamster</button>
-            </p>
-            <div>
-                { hamsters 
-                    ? hamsters.map(hamster => (
-                        <p>{hamster.name} is {hamster.age} y/o and likes to eat {hamster.favFood}.</p>
-                    ))
-                    : null }
-            </div>
+            <StyledH1>
+                BATTLE Section
+            </StyledH1>
+            {hamster1 && hamster1Img
+                ? <StyledCardPlacer>
+                        <HamsterCard hamster={hamster1} hamsterImg={hamster1Img ? hamster1Img : null} />
+                    </StyledCardPlacer>
+                : null 
+            }
+            <h2>VS</h2>
+            {hamster2 && hamster2Img
+                ? <StyledCardPlacer>
+                        <HamsterCard hamster={hamster2} hamsterImg={hamster2Img ? hamster2Img : null} />
+                    </StyledCardPlacer>
+                : null 
+            }
+            </StyledContainer>
         </StyledMain>
     )
 }
 
-async function getHamsterTest() {
-    try {
-        let randomHamster = await fetch('api/hamsters/random');
-        console.log('fetch made and recieved')
-        let response = await randomHamster.json()
-        console.log(response)
-        return response
-
-    } catch (e) {
-        console.log('Error fetching hamster because ', e)
-        return null
-    }
-}
-
 const StyledMain = styled.main`
     display: grid;
-    grid-template-columns: auto 1fr 1fr auto;
+    grid-template-columns: 1fr 80vw 1fr;
+    grid-template-rows: 1fr 45vh 5em auto;
     background-color: lightcoral;
     height: 100%;
-    background-color: green;
+    background-color: grey;
 `;
+
+const StyledContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    grid-column: 2 / 3;
+`
+
+const StyledH1 = styled.h1`
+    display: flex;
+    justify-content: center;
+    grid-column: 2 / 3;
+`
+
+const StyledCardPlacer = styled.div`
+    display: flex;
+    grid-column: 2 / 3;
+
+`
 
 export default Battles

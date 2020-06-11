@@ -8,7 +8,7 @@ router.post('/', async (req, res) => {
         // Hämta antal totalgames för att sätta ett match:id
         let snapshotGames = await db.collection('stats').doc('totalGames').get();
 
-        // Hämtar alla hamstrar och spara dem i en array samt sparrar deras docID i en separat array
+        // Hämtar alla hamstrar och spara dem i en array samt sparar deras docID i en separat array
         let snapshotHamsters = await db.collection('hamsters').orderBy('id', 'asc').get();
 
         let docIds = []

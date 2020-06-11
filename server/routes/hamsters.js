@@ -7,22 +7,39 @@ let curHamsterTotal = 0;
 router.get('/random', async (req, res) => {
     try{
         let snapshot = await db.collection('hamsters').get()
-
         //Sparar alla hamstrar i db i en array
         let hamster = [];
         snapshot.forEach(doc => {
             hamster.push(doc.data());
             curHamsterTotal++
         })
-        
+
         let randomNr = Math.floor(Math.random() * hamster.length + 1);
         await res.send(hamster[randomNr])
 
         // Updates db with total num of hamsters
-        await db.collection('stats').doc('hamsterCount').set({ total: curHamsterTotal });
+        // await db.collection('stats').doc('hamsterCount').set({ total: curHamsterTotal });
     }
     catch (err) {
         console.error(err);
+    }
+})
+
+// Get the image of the hamster img file provided as a param
+router.get('/hamsterImage/:fileName', async (req, res) => {
+    try {
+        let imagePromise = storage.bucket(`hamster-wars.appspot.com`).file(`hamsterImgs/${req.params.fileName}`)
+        .getSignedUrl({
+            action: "read",
+            expires: '03-17-2025'
+        })
+        .then(data => data[0])
+        const hamsterImage = await imagePromise
+        console.log('hamsterImage backend: ', hamsterImage)
+        res.send({"url": hamsterImage})
+        
+    } catch (error) {
+        console.log(error)
     }
 })
 
