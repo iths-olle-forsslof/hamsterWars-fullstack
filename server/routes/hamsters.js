@@ -25,7 +25,7 @@ router.get('/random', async (req, res) => {
     }
 })
 
-// Get the image of the hamster img file provided as a param
+// Get the image from Storage. Img file name from hamsterobject provided as a param
 router.get('/hamsterImage/:fileName', async (req, res) => {
     try {
         let imagePromise = storage.bucket(`hamster-wars.appspot.com`).file(`hamsterImgs/${req.params.fileName}`)
@@ -35,7 +35,6 @@ router.get('/hamsterImage/:fileName', async (req, res) => {
         })
         .then(data => data[0])
         const hamsterImage = await imagePromise
-        console.log('hamsterImage backend: ', hamsterImage)
         res.send({"url": hamsterImage})
         
     } catch (error) {
