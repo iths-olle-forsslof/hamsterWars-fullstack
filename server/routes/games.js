@@ -2,7 +2,7 @@ const { Router } = require('express');
 const {db} = require('./../firebase')
 const router = new Router();
 
-// Sparar ett matchobjekt i db samt uppdaterar total number of games played
+// Sparar ett matchobjekt i db samt uppdaterar total number of games played samt uppdaterar hamsterobjekten
 router.post('/', async (req, res) => {
     try {
         // Hämta antal totalgames för att sätta ett match:id

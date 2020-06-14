@@ -1,19 +1,27 @@
 :root {
-    --pink: #fb007180;
-    --menu-background: rgb(105, 126, 170);
+    --black: #1f1f2b;
+    --white: #ece3e3;
+    --pink: #db2577;
 }
 
 *, *::before, *::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    color: var(--black);
 }
 
 a {
-    color: palegreen;
+    color: var(--black);
 }
 
-header {
+body {
+    background-color: var(--white);
+}
+
+.App > header {
     position: relative;
+    border-bottom: 2px solid var(--black);
     box-shadow: 0 3px 10px 1px rgba(66, 10, 80, 0.1);
 }
+

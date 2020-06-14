@@ -40,26 +40,27 @@ const Menu = () => {
 // CSS styles
 //Grid container
 const HeaderLayout = styled.div`
-    background-color: var(--menu-background);
+    background-color: var(--white);
     text-align: center;
     width: 100%;
     position: relative;
-
+    
     @media(min-width: 768px) {
         display: grid;
         grid-template-columns: 1fr auto minmax(500px, 3fr) 1fr;
     }
-`
+    `
 const NavLayout = styled.nav`
     position: absolute;
     text-align: left;
     top: 100%;
     left: 0;
-    background-color: var(--menu-background);
+    background-color: var(--white);
     width: 100%;
     transform: scale(1, 0);
     transform-origin: top;
     transition: transform .2s ease-in-out;
+    border-bottom: 2px solid var(--black);
 
     & ul {
         margin: 0;
@@ -74,7 +75,7 @@ const NavLayout = styled.nav`
             transition: opacity .1s ease-in;
             
             &:hover {
-                color: red;
+                color: var(--pink);
             }
         }
     }
@@ -96,6 +97,7 @@ const NavLayout = styled.nav`
         top: initial;
         left: initial;
         grid-column: 3 / 4;
+        border: none;
         
         & ul {
             display: flex;

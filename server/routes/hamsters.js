@@ -28,17 +28,26 @@ router.get('/random', async (req, res) => {
 // Get the image from Storage. Img file name from hamsterobject provided as a param
 router.get('/hamsterImage/:fileName', async (req, res) => {
     try {
-        let imagePromise = storage.bucket(`hamster-wars.appspot.com`).file(`hamsterImgs/${req.params.fileName}`)
-        .getSignedUrl({
-            action: "read",
-            expires: '03-17-2025'
-        })
-        .then(data => data[0])
+        const bucket = storage.bucket(`hamster-wars.appspot.com`)
+        const imageFile = bucket.file(`hamsterImgs/${req.params.fileName}`)
+
+        // check if image exists in bucket then get the URL and send it back
+        const fileExists = await imageFile.exists().then(data => data[0])
+        const imagePromise = fileExists 
+            ? imageFile.getSignedUrl({
+                action: "read",
+                expires: '03-17-2025'
+            })  
+            .then(data => data[0])
+            .catch(err => {throw err})
+            : null;
+
         const hamsterImage = await imagePromise
+
         res.send({"url": hamsterImage})
         
     } catch (error) {
-        console.log(error)
+        console.log('file dosen\'t exist, error: ', error)
     }
 })
 
@@ -81,6 +90,7 @@ router.get('/:id', async (req, res) => {
 router.put('/:id/results', async (req, res) => {
     // leta reda på hamster med ID
     try{
+        console.log('fetch incoming, req.body: ', req.body)
         let snapshot = await db.collection('hamsters').where("id", "==", req.params.id*1).get();
 
         // Jag uppdaterar totalgames i POST/games så det behöver inte göras här
