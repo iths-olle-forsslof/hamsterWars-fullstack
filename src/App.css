@@ -17,11 +17,13 @@ a {
 
 body {
     background-color: var(--white);
+    color: var(--black);
 }
 
 .App > header {
     position: relative;
     border-bottom: 2px solid var(--black);
     box-shadow: 0 3px 10px 1px rgba(66, 10, 80, 0.1);
+    z-index: 999;
 }
 

@@ -90,12 +90,8 @@ router.get('/:id', async (req, res) => {
 router.put('/:id/results', async (req, res) => {
     // leta reda på hamster med ID
     try{
-        console.log('fetch incoming, req.body: ', req.body)
         let snapshot = await db.collection('hamsters').where("id", "==", req.params.id*1).get();
 
-        // Jag uppdaterar totalgames i POST/games så det behöver inte göras här
-        // let currentTotalGames = await db.collection('stats').doc('totalGames').get();
-        
         snapshot.forEach(doc => {
             let hamster = doc.data();
             
@@ -113,11 +109,6 @@ router.put('/:id/results', async (req, res) => {
             db.collection('hamsters').doc(doc.id).set(hamster)
             .then(res.send({msg:`The hamster known as ${hamster.name} with id ${hamster.id} is updated. Wins: ${hamster.wins}, Defeats: ${hamster.defeats}`}))
             .catch(err => {throw err})
-
-            // //uppdatera totalgames i db
-            // let totalGames = currentTotalGames.data();
-            // totalGames.total++
-            // db.collection('stats').doc('totalGames').set(totalGames)
         })
     }
     catch(err) {

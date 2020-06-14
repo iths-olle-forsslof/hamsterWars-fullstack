@@ -22,7 +22,6 @@ async function getHamsterImg(fileName) {
 
 // post winner & loser function
 async function updateContestant(hamster) {
-    console.log('begining to upload hamster:', hamster )
     try {
         await fetch(`api/hamsters/${hamster.id}/results`, {
             method: "PUT",
@@ -34,17 +33,31 @@ async function updateContestant(hamster) {
         .catch(err => {throw err})
         
     } catch (error) {
-        console.log('Error updating hamsterobj: ', error)
+        console.log('Error updating hamsterobj because: ', error)
         return error
     }
 }
 
 // update matchobject function
 
-function postMatch(data) {
-    fetch('api/')
+async function postMatchData(data) {
+    try {
+        fetch('api/games/', {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: {"Content-Type": "application/json"}
+        })
+        .then(res => res.json())
+        .then(res => console.log(res))
+        .then(res => {return res})
+        .catch(err => {throw err})
+
+    } catch (error) {
+        console.log('Error posting match because: ', error)
+        return error;
+    }
 }
 
 // function that posts the clicked "winner" to the db and update the games played (POST to /games)
 
-export {getHamster, getHamsterImg, updateContestant}
+export {getHamster, getHamsterImg, updateContestant, postMatchData}
