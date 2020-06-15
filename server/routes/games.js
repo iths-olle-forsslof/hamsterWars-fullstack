@@ -64,4 +64,21 @@ router.get('/', async (req, res) => {
     }
 })
 
+router.delete('/deleteAll', async (req, res) => {
+    try {
+        let snapshot = await db.collection('games').get()
+        snapshot.forEach(doc => {
+            doc.ref.delete()
+            .then(`Game id: ${doc.data.id} deleted`)
+            .catch(err => {throw err})
+        })
+        res.status(200).send({msg: 'All games deleted'})
+        .catch(err => {throw err})
+        
+    } catch (error) {
+        console.log({msg: 'Error deleting all games', error: error})
+        return error
+    }
+})
+
 module.exports = router

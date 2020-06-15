@@ -18,7 +18,6 @@ const Battles = () => {
     const [loser, setLoser] = useState(null)
 
     const [matchData, setMatchData] = useState({})
-
     const [displayWinner, setDisplayWinner] = useState(false)
     
     // Hamster1 (Different way of using async in useEffect)
@@ -76,8 +75,8 @@ const Battles = () => {
             const updateMatchStats = async (data) => await postMatchData(data)
             await Promise.all([updateWinner(updatedWinner), updateLoser(updatedLoser), updateMatchStats(updatedMatchData)])
             .then(() => {
-                setWinner(winner)
-                setLoser(loser)
+                setWinner(updatedWinner)
+                setLoser(updatedLoser)
                 setMatchData(updatedMatchData)
             })
             .then(() => setDisplayWinner(true))
@@ -98,10 +97,10 @@ const Battles = () => {
     }
 
     const playAgain = async () => {
-         await getHamster()
-         .then(hamster => setHamster1(hamster))
-         .then(() => setDisplayWinner(false))
-         .catch(e => console.log(e))
+        await getHamster()
+        .then(hamster => setHamster1(hamster))
+        .then(() => setDisplayWinner(false))
+        .catch(e => console.log(e))
     }
 
     return (

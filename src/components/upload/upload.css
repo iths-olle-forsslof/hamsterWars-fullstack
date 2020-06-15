@@ -1,0 +1,19 @@
+.invalid {
+    color: white;
+    font-size: .7em;
+    font-weight: bold;
+    margin-top: -1.3em;
+    background-color: red;
+    max-width: 400px;
+    text-align: center;
+}
+
+.valid {    
+    color: white;
+    font-size: .7em;
+    font-weight: bold;
+    margin-top: -1.3em;
+    background-color: rgb(0, 158, 26);
+    max-width: 400px;
+    text-align: center;
+}

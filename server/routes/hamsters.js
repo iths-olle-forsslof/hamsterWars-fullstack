@@ -139,6 +139,41 @@ router.put('/:id/reset', async (req, res) => {
     }
 })
 
+router.put('/reset', async (req, res) => {
+    try {
+        let snapshot = await db.collection('hamsters').get()
+        snapshot.forEach(doc => {
+            let hamster = doc.data();
+
+            hamster.wins = 0
+            hamster.defeats = 0
+            hamster.games = 0
+
+            db.collection('hamsters').doc(doc.id).set(hamster)
+            .catch(err => {throw err})
+        })
+    }
+    catch(err) {
+        res.status(500).send('Was not able to reset hamster: ', err)
+    }
+})
+
+router.delete('/:id/delete', async (req, res) => {
+    try {
+        await db.collection('hamsters').where('id', '==' , req.params.id*1).get()
+        .then(querySnapshot => querySnapshot.forEach(doc => {
+            doc.ref.delete()
+            .then(`Hamster id: ${req.params.id} successfuly deleted`)
+            .catch(err => {throw err})
+        }))
+        .then(res.send(`Hamster with id: ${req.params.id} have been successfully deleted`))
+        .catch(err => {throw err})
+    } catch (error) {
+        console.log({msg: 'Error deleteing hamster', error: error})
+        return error
+    }
+})
+
 //Lägg till en ny hamster
 router.post('/add', async (req, res) => {
     try {
