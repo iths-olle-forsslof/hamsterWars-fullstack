@@ -1,7 +1,9 @@
 :root {
     --black: #1f1f2b;
-    --white: #ece3e3;
+    --white: #e3ecea;
     --pink: #db2577;
+    --thin-border: 1px solid var(--black);
+    --thick-border: 3px solid var(--black);
 }
 
 *, *::before, *::after {
@@ -13,6 +15,27 @@
 
 a {
     color: var(--black);
+}
+
+button {
+    padding: 1em;
+    color: var(--black);
+    background-color: white;
+    box-shadow: 0 3px 6px -1px rgba(66, 10, 80, 0.2);
+    border: var(--thin-border);
+    cursor: pointer;
+    transform: none;
+}
+
+button:hover {
+    box-shadow: 0 6px 6px -2px rgba(66, 10, 80, 0.2);
+    transform: scale(1.05);
+    transition: box-shadow .1s ease-in-out, transform .1s ease-in-out;
+}
+
+button:active {
+    box-shadow: 0 3px 6px -1px rgba(66, 10, 80, 0.2);
+    transform: scale(1);
 }
 
 body {

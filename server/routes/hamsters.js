@@ -1,12 +1,14 @@
 const { Router } = require('express');
-const { db, auth, storage } = require('../firebase');
+const fs = require('fs')
+const { db, storage } = require('../firebase');
 const router = new Router();
 
-let curHamsterTotal = 0;
+
 // Hämta RANDOM hamster
 router.get('/random', async (req, res) => {
     try{
         let snapshot = await db.collection('hamsters').get()
+        let curHamsterTotal = 0;
         //Sparar alla hamstrar i db i en array
         let hamster = [];
         snapshot.forEach(doc => {
@@ -32,7 +34,7 @@ router.get('/hamsterImage/:fileName', async (req, res) => {
         const imageFile = bucket.file(`hamsterImgs/${req.params.fileName}`)
 
         // check if image exists in bucket then get the URL and send it back
-        const fileExists = await imageFile.exists().then(data => data[0])
+        const fileExists = await imageFile.exists().then(data => data[0]).catch(error => {throw error})
         const imagePromise = fileExists 
             ? imageFile.getSignedUrl({
                 action: "read",
@@ -107,7 +109,7 @@ router.put('/:id/results', async (req, res) => {
 
             //Skriv in den nya uppdaterade hamstern i db
             db.collection('hamsters').doc(doc.id).set(hamster)
-            .then(res.send({msg:`The hamster known as ${hamster.name} with id ${hamster.id} is updated. Wins: ${hamster.wins}, Defeats: ${hamster.defeats}`}))
+            .then(res.send(hamster))
             .catch(err => {throw err})
         })
     }
@@ -160,14 +162,27 @@ router.put('/reset', async (req, res) => {
 
 router.delete('/:id/delete', async (req, res) => {
     try {
-        await db.collection('hamsters').where('id', '==' , req.params.id*1).get()
-        .then(querySnapshot => querySnapshot.forEach(doc => {
+        let imgName = [];
+        let snapshot = await db.collection('hamsters').where('id', '==' , req.params.id*1).get()
+        snapshot.forEach(doc => {
+            imgName.push(doc.data().imgName)
             doc.ref.delete()
             .then(`Hamster id: ${req.params.id} successfuly deleted`)
             .catch(err => {throw err})
-        }))
-        .then(res.send(`Hamster with id: ${req.params.id} have been successfully deleted`))
-        .catch(err => {throw err})
+        })
+        res.send(`Hamster with id: ${req.params.id} have been successfully deleted`)
+        const bucket = storage.bucket(`hamster-wars.appspot.com`)
+        const file = bucket.file(`hamsterImgs/${imgName[0]}`)
+        
+        // file.delete(function(err, apiResponse) {});
+
+        //-
+        // If the callback is omitted, we'll return a Promise.
+        //-
+        file.delete().then(function(data) {
+        const apiResponse = data[0];
+        });
+
     } catch (error) {
         console.log({msg: 'Error deleteing hamster', error: error})
         return error
@@ -177,24 +192,66 @@ router.delete('/:id/delete', async (req, res) => {
 //Lägg till en ny hamster
 router.post('/add', async (req, res) => {
     try {
-        let snapshot = await db.collection('hamsters').get()
+        //Saves the imagefile
+        const imgData = req.files.image
+        const bucket = storage.bucket(`hamster-wars.appspot.com`)
+        const fileName = `hamsterImgs/${req.files.image.name}`;
+        const file = bucket.file(fileName);
 
+        await imgData.mv(`./uploads/${req.files.image.name}`,  (err) => {
+            if (err) console.log(err)
+            console.log('fileimage saved in upload folder!')
+        })
+
+        fs.createReadStream(__dirname + `./../uploads/${req.files.image.name}`)
+        .pipe(file.createWriteStream({
+            metadata: {
+              contentType: 'image/jpeg',
+              metadata: {
+                custom: 'Cute hamster image'
+              }
+            }
+        }))
+        .on('error', function(err) {
+            console.log('error createreadstream: ', err)
+        })
+        .on('finish', function() {
+            // The file upload is complete.
+            console.log('Image uploaded!')
+        })
+        
+        // fs.unlink(`./uploads/${req.files.image.name}`, (err) => {
+        //     if (err) throw err
+        // })
+
+        let curHamsterTotal = 0;
+        let snapshot = await db.collection('hamsters').get()
         //Räknar alla hamstrar som finns i db
         snapshot.forEach(doc => {
             curHamsterTotal++
         })
-        
         // Lägger till hamsterId beräknat på hur många som redan finns i db och lägger till samma id på bildnamnet
-        let newHamster = req.body
-        newHamster.id = curHamsterTotal + 1
-        newHamster.imgName = `hamster-${curHamsterTotal + 1}.jpg`
-
+        let newHamster = {
+            id: curHamsterTotal + 1,
+            name: req.body.name,
+            age: req.body.age,
+            loves: req.body.likes,
+            favFood: req.body.food,
+            wins: 0,
+            defeats: 0,
+            games: 0,
+            imgName: req.files.image.name
+        }
         // Sparar den nya hamstern i db och uppdaterar hamsterCount i stats
-        db.collection('hamsters').doc().set(req.body)
-        .then(res.send({msg: `Hamster has been added.`, hamster: req.body}))
-        .catch(err => {throw {errmsg:`Error adding hamster`, err: err}})
+        db.collection('hamsters').doc().set(newHamster)
+        .then(res.send({msg: `Hamster has been added.`, hamster: newHamster}))
+        .catch(err => {throw {errmsg:`Error adding hamster`, error: err}})
         .then( db.collection('stats').doc('hamsterCount').set({total: curHamsterTotal + 1}))
         .catch(err => {throw {errmsg:`Error updating hamsterCount`, err: err}})
+        .then(fs.unlink(`./uploads/${req.files.image.name}`, (err) => {
+            if (err) throw err
+        }))
+        .then(() => console.log('Image removed from temp directory'))
 
     }
     catch (err) {
@@ -203,5 +260,15 @@ router.post('/add', async (req, res) => {
         
     }
 })
+
+// router.put('/addImage', async (req, res) => {
+//     try {
+
+//         let storageRef = fbStorage.ref(`hamsterImgs/hamster-${curHamsterTotal + 1}.jpeg`)
+//         storageRef.put(req.body)
+//     } catch (error) {
+        
+//     }
+// })
     
 module.exports = router

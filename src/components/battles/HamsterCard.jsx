@@ -35,7 +35,7 @@ const StyledCardWrapper = styled.div`
 
 const StyledTitle = styled.div`
     grid-column: 1 / 2;
-    grid-row: 6 / 7;
+    grid-row: 8 / 9;
     display: flex;
     z-index: 10;
 
@@ -59,7 +59,7 @@ const RightStyledTitle = styled(StyledTitle)`
 const StyledPictureContainer = styled.div`
     position: relative;
     grid-column: 1 / 6;
-    grid-row: 1 / 7;
+    grid-row: 1 / 9;
     width: 100%;
     background-color: var(--white);
     border-radius: .1em;

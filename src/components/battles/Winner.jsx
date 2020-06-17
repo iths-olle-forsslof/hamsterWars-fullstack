@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components'
 
 const Winner = ({winner, winnerImg, playAgain}) => {
+    console.log('winner i winner: ', winner)
     return (
         <StyledContainer>
             <StyledCardWrapper >
@@ -13,11 +14,11 @@ const Winner = ({winner, winnerImg, playAgain}) => {
                 <h2>THE WINNER IS {winner.name.toUpperCase()}</h2>
                 <div>
                     <ul>
-                        <li> Name: {winner.name} </li>
                         <li>Age: {winner.age}</li>
+                        <li>Battles fought: {winner.games}</li>
                         <li>Wins: {winner.wins}</li>
                         <li>Losses: {winner.defeats}</li>
-                        <li>Favourite food: {winner.favFood}</li>
+                        <li>{winner.name} loves to {winner.loves.toLowerCase()} and eat {winner.favFood}</li>
                     </ul>
                 </div>
                 <button onClick={playAgain} > NEW BATTLE </button>
@@ -94,12 +95,25 @@ const StyledInfo = styled.div`
         text-align: center;
     }
 
+    & div {
+        display: flex;
+        justify-content: center;
+    }
+
     & ul {
+        display: flex;
+        flex-flow: row wrap;
+        padding: 1em;
         width: 80%;
         font-size: .8em;
         list-style: none;
         align-self: center;
-        border: 1px solid var(--black)
+        text-align: center;
+        border: 1px solid var(--black);
+
+        & li {
+            margin: 1em;
+        }
     }
 
     & button {

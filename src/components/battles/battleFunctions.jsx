@@ -23,14 +23,14 @@ async function getHamsterImg(fileName) {
 // post winner & loser function
 async function updateContestant(hamster) {
     try {
-        await fetch(`api/hamsters/${hamster.id}/results`, {
+        const request = await fetch(`api/hamsters/${hamster.id}/results`, {
             method: "PUT",
             body: JSON.stringify(hamster),
             headers: {"Content-Type": "application/json"}
         })
-        .then(response => response.json())
-        .then(resp => console.log(resp))
-        .catch(err => {throw err})
+        const response = await request.json()
+    
+        return response
         
     } catch (error) {
         console.log('Error updating hamsterobj because: ', error)
@@ -42,15 +42,15 @@ async function updateContestant(hamster) {
 
 async function postMatchData(data) {
     try {
-        fetch('api/games/', {
+        const request = await fetch('api/games/', {
             method: "POST",
             body: JSON.stringify(data),
             headers: {"Content-Type": "application/json"}
         })
-        .then(res => res.json())
-        .then(res => console.log(res))
-        .then(res => {return res})
         .catch(err => {throw err})
+        const response = await request.json()
+
+        return response
 
     } catch (error) {
         console.log('Error posting match because: ', error)

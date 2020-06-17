@@ -31,9 +31,7 @@ const Battles = () => {
         getHamsterImg(hamster1.imgName)
         .then(setHamster1Img)
         .then(() => {
-            setTimeout(() => {
-                setH1IsLoading(false)
-            }, 400)
+            setH1IsLoading(false)
         })
         .catch(e => console.log('Error: ', e.message))
     }, [hamster1])
@@ -58,33 +56,56 @@ const Battles = () => {
         getHamsterImg(hamster2.imgName)
         .then(setHamster2Img)
         .then(() => {
-            setTimeout(() => {
-                setH2IsLoading(false)
-            }, 400)
+            setH2IsLoading(false)
         })
+
         .catch(e => console.log('Error: ', e.message))
     }, [hamster2])
 
     const handleClick = async (winner, loser) => {
-        try {
-            const updatedWinner = { ...winner, wins: 1, defeats: 0}
-            const updatedLoser = { ...loser, wins: 0, defeats: 1}
-            const updatedMatchData = handleMatchData(updatedWinner, updatedLoser)
-            const updateWinner = async (win) => await updateContestant(win)
-            const updateLoser = async (loss) => await updateContestant(loss)
-            const updateMatchStats = async (data) => await postMatchData(data)
-            await Promise.all([updateWinner(updatedWinner), updateLoser(updatedLoser), updateMatchStats(updatedMatchData)])
-            .then(() => {
-                setWinner(updatedWinner)
-                setLoser(updatedLoser)
-                setMatchData(updatedMatchData)
-            })
-            .then(() => setDisplayWinner(true))
-            .catch(err => {throw err}) 
-        } catch (error) {
-            console.log(error)
-        }
+        let updatedWinner = { ...winner, wins: 1, defeats: 0}
+        let updatedLoser = { ...loser, wins: 0, defeats: 1}
+        let updatedMatchData = handleMatchData(updatedWinner, updatedLoser)
+        // let updateWinner =  await updateContestant(updatedWinner)
+        // let updateLoser = await updateContestant(updatedLoser)
+        // let updateMatchStats = await postMatchData(updatedMatchData)
+        Promise.all([ updateContestant(updatedWinner),  updateContestant(updatedLoser),  postMatchData(updatedMatchData)])
+        .then((data) => {
+            setWinner(data[0])
+            setLoser(data[1])
+            setMatchData(data[2])
+        })
+        .then(() => setDisplayWinner(true))
+        .catch(err => console.log(err))
     }
+
+    // const handleClick = async (winner, loser) => {
+    //     try {
+    //         let updatedWinner = { ...winner, wins: 1, defeats: 0}
+    //         let updatedLoser = { ...loser, wins: 0, defeats: 1}
+    //         let updatedMatchData = handleMatchData(updatedWinner, updatedLoser)
+
+    //         const winnerPromise = async (winning) => await updateContestant(winning)
+    //         .then((data) => { updatedWinner = data}).catch(err =>{throw err})
+
+    //         const loserPromise = async (losing) => await updateContestant(losing)
+    //         .then(data => updatedLoser = data).catch(err =>{throw err})
+
+    //         const matchPromise = async (match) => await postMatchData(match)
+    //         .then(data => updatedMatchData = data).catch(err =>{throw err})
+
+    //         await Promise.all([winnerPromise(updatedWinner), loserPromise(updatedLoser), matchPromise(updatedMatchData)])
+    //         .then(() => {
+    //             setWinner(updatedWinner)
+    //             setLoser(updatedLoser)
+    //             setMatchData(updatedMatchData)
+    //         })
+    //         .then(() => setDisplayWinner(true))
+    //         .catch(err => {throw err}) 
+    //     } catch (error) {
+    //         console.log(error)
+    //     }
+    // }
 
     const handleMatchData = (winner, loser) => {
         return {
@@ -97,9 +118,12 @@ const Battles = () => {
     }
 
     const playAgain = async () => {
+        setH1IsLoading(true)
+        setH2IsLoading(true)
+        setDisplayWinner(false)
+        
         await getHamster()
         .then(hamster => setHamster1(hamster))
-        .then(() => setDisplayWinner(false))
         .catch(e => console.log(e))
     }
 
@@ -110,13 +134,11 @@ const Battles = () => {
                     HamsterWARS ARENA
                 </StyledH1>
             </header>
-
-            { displayWinner && winner && loser && matchData &&
+            { displayWinner && winner && loser &&
                  <Winner winner={winner} 
-                 winnerImg={winner === hamster1 ? hamster1Img : hamster2Img} 
+                 winnerImg={winner.id === hamster1.id ? hamster1Img : hamster2Img} 
                  playAgain={playAgain} />
             }
-
             <StyledBattleContainer style={ displayWinner ? {display: 'none'} : null } >
                 <StyledCardPlacer>
                     { h1IsLoading
@@ -134,7 +156,7 @@ const Battles = () => {
                     </StyledVs>
                 }
                 
-                <StyledCardPlacer>
+                <StyledCardPlacer2>
                     { h2IsLoading
                         ? <LoadingSpinner />
                         : <HamsterCard hamster={hamster2} 
@@ -143,7 +165,7 @@ const Battles = () => {
                         isRight={true} 
                         handleClick={handleClick} /> 
                     }
-                </StyledCardPlacer>
+                </StyledCardPlacer2>
             </StyledBattleContainer>
             <StyledH3 style={ displayWinner ? {display: 'none'} : null } >You decide the winner. Click on the cutest hamster!</StyledH3>
         </StyledMain>
@@ -152,13 +174,14 @@ const Battles = () => {
 
 const StyledMain = styled.main`
     display: grid;
-    grid-template-columns: 1fr 70vw 1fr;
+    grid-template-columns: repeat (1fr, 4);
     grid-template-rows: [header-start] 5em [battle-start] 5fr 2em auto;
     background-color: var(--white);
-    height: 100%;
+    /* height: 100%; */
 
     & header {
         grid-column: 1 / 4;
+        grid-row: header-start / 2;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -170,43 +193,67 @@ const StyledMain = styled.main`
 `;
 
 const StyledBattleContainer = styled.div`
-    position: relative;
-    display: flex;
-    flex-flow: row;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
     grid-row: battle-start / 3;
     grid-column: 2 / 3;
+    justify-self: center;
+    position: relative;
+    display: grid;
+    grid-gap: 1em;
+    grid-template-columns: [left-start] auto [card1-left] auto [vs-left] minmax(.5em, 1.5em) [card1-right] auto [card2-left] minmax(.5em, 1.5em) [vs-right] auto [card2-right] auto [right-end] auto;
+    grid-template-rows: [top-start] 1fr [card1-start2] auto [vs-start2] minmax(.5em, 1.5em) [card1-end2] auto [card2-start2] minmax(.5em, 1.5em) [vs-end2] auto [card2-end2] auto [bottom-end] 1fr;
+    align-items: center;
 
     @media (min-width: 800px) {
-        flex-direction: row;
-    }
+        grid-column: 2 / 3;
+       }
 `
 
 const StyledVs = styled.div`
+    grid-row: vs-start2 / vs-end2;
+    grid-column: 3 / 7;
+    justify-self: center;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: var(--black);
     max-width: 100%;
     z-index: 20;
-    transform: rotate(-8deg);
+    transform: rotate(8deg);
 
     & h1 {
         color: var(--white);
         -webkit-text-stroke: 1px var(--black);
         padding: .2em 1em;
     }
+
+    @media (min-width: 800px) {
+        grid-row: 3 / 7;
+        grid-column: vs-left / vs-right;
+    }
 `
 
 const StyledCardPlacer = styled.div`
+    grid-column: 2 / 8;
+    grid-row: card1-start2 / card1-end2;
     display: flex;
-    min-width: 350px;
-    max-width: 450px;
+    min-width: 300px;
+    max-width: 400px;
     justify-content: center;
     align-items: center;
+    
+    @media (min-width: 800px) {
+        grid-column: card1-left / card1-right;
+        grid-row: 2 / 8;
+    }
 ` 
+const StyledCardPlacer2 = styled(StyledCardPlacer)`
+    grid-row: card2-start2 / card2-end2;
+
+    @media (min-width: 800px) {
+        grid-column: card2-left / card-right;
+        grid-row: 2 / 8;
+    }
+`
 
 const StyledH1 = styled.h1`
     display: flex;
