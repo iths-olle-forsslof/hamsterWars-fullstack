@@ -198,12 +198,12 @@ router.post('/add', async (req, res) => {
         const fileName = `hamsterImgs/${req.files.image.name}`;
         const file = bucket.file(fileName);
 
-        const saveImage = await imgData.mv(__dirname + `./../uploads/${req.files.image.name}`,  (err) => {
+        const saveImage = await imgData.mv(__dirname + `/../uploads/${req.files.image.name}`,  (err) => {
             if (err) {console.log('Error saving file in uploadfolder:', err); throw err}
             console.log('fileimage saved in upload folder!')
         })
     
-        const createStream = fs.createReadStream(__dirname + `./../uploads/${req.files.image.name}`)
+        const createStream = fs.createReadStream(__dirname + `/../uploads/${req.files.image.name}`)
         .pipe(file.createWriteStream({
             metadata: {
               contentType: 'image/jpeg',
@@ -223,7 +223,7 @@ router.post('/add', async (req, res) => {
         
         Promise.all([saveImage, createStream])
         .then((data) => {
-            fs.unlinkSync(__dirname + `./../uploads/${req.files.image.name}`, (err) => {
+            fs.unlinkSync(__dirname + `/../uploads/${req.files.image.name}`, (err) => {
                 if (err) throw err
             })
         })
