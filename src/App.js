@@ -5,6 +5,7 @@ import Battles from './components/battles/Battles'
 import History from './components/history/History'
 import Stats from './components/stats/Stats'
 import Upload from './components/upload/Upload'
+import Start from './components/Start'
 import './App.css';
 
 function App() {
@@ -21,6 +22,7 @@ return (
 		<Route path="/stats" > <Stats /> </Route>
 		<Route path="/upload" > <Upload /> </Route>
 		<Route path="/history" > <History /> </Route>
+		<Route path="/" > <Start /> </Route>
 	</Switch>
 	</main>
 	</div>

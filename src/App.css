@@ -15,6 +15,7 @@
 
 a {
     color: var(--black);
+    text-decoration: none;
 }
 
 button {

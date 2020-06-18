@@ -8,7 +8,7 @@ const Menu = () => {
 
     return (
     <HeaderLayout>
-        <Logo><h2>HAMSTER WARS</h2></Logo>
+        <Logo><NavLink to="/"><h2>HAMSTER WARS</h2></NavLink></Logo>
         <HamburgerIcon />
         <NavLayout>
             <ul>
@@ -22,11 +22,11 @@ const Menu = () => {
                         Stats
                     </li>
                 </NavLink>
-                <NavLink to="/history">
+                {/* <NavLink to="/history">
                     <li>
                     History
                     </li>
-                </NavLink>
+                </NavLink> */}
                 <NavLink to="/upload">
                     <li>
                     Upload

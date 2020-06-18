@@ -198,7 +198,7 @@ router.post('/add', async (req, res) => {
         const fileName = `hamsterImgs/${req.files.image.name}`;
         const file = bucket.file(fileName);
 
-        const saveImage = await imgData.mv(`./uploads/${req.files.image.name}`,  (err) => {
+        const saveImage = await imgData.mv(__dirname + `./../uploads/${req.files.image.name}`,  (err) => {
             if (err) console.log('Error saving file in uploadfolder:', err)
             console.log('fileimage saved in upload folder!')
         })
