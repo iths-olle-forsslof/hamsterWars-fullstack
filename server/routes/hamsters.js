@@ -199,7 +199,7 @@ router.post('/add', async (req, res) => {
         const file = bucket.file(fileName);
 
         const saveImage = await imgData.mv(__dirname + `./../uploads/${req.files.image.name}`,  (err) => {
-            if (err) console.log('Error saving file in uploadfolder:', err)
+            if (err) {console.log('Error saving file in uploadfolder:', err); throw err}
             console.log('fileimage saved in upload folder!')
         })
     
@@ -213,6 +213,7 @@ router.post('/add', async (req, res) => {
             }
         }))
         .on('error', function(err) {
+            if (err) throw err
             console.log('error create readstream: ', err)
         })
         .on('finish', function() {
@@ -222,8 +223,7 @@ router.post('/add', async (req, res) => {
         
         Promise.all([saveImage, createStream])
         .then((data) => {
-            console.log('promiseall data: ',data)
-            fs.unlinkSync(`./uploads/${req.files.image.name}`, (err) => {
+            fs.unlinkSync(__dirname + `./../uploads/${req.files.image.name}`, (err) => {
                 if (err) throw err
             })
         })
