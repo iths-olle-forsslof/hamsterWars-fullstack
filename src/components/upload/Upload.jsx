@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import './upload.css';
+import Success from './Success';
 
 const Upload = () => {
     const [name ,setName] = useState('')
@@ -14,9 +15,24 @@ const Upload = () => {
     const [imageTouched, setImageTouched] = useState(false)
     const [image, setImage] = useState('')
     const [formIsValid, setFormIsValid] = useState(false)
+    const [uploadComplete, setUploadComplete] = useState(false)
 
     const stopSubmit = e => {
         e.preventDefault();
+    }
+
+    const resetAll = () => {
+        setName('')
+        setNameTouched(false)
+        setAge('')
+        setAgeTouched(false)
+        setLikes('')
+        setLikeTouched(false)
+        setFood('')
+        setFoodTouched(false)
+        setImage(null)
+        setImageTouched(false)
+        setUploadComplete(false)
     }
 
     const handleSubmit = async () => {
@@ -27,16 +43,23 @@ const Upload = () => {
             formData.append('likes', likes)
             formData.append('food', food)
             formData.append('image', image)
-            await fetch('api/hamsters/add', {
+            const request = await fetch('api/hamsters/add', {
                 method: "POST",
                 body: formData
+            }).catch(err => {throw err})
+
+            const response = await request.json()
+
+            Promise.all([request, response])
+            .then(data => {
+                setUploadComplete(true)
             })
-            .then(response => response.json())
-            .then(response => console.log(response))
-            .catch(err => {throw err})
+            .then( () => setTimeout(() => {
+                resetAll()
+            }, 2000) )
             
         } catch (error) {
-            console.log(error)
+            console.log('Error uploading file: ', error)
         }
     }
 
@@ -73,6 +96,7 @@ const Upload = () => {
 
     return (
         <StyledUploadContainer>
+            { uploadComplete && <Success /> }
             <h2>Upload your own Hamster Warrior</h2>
             <StyledFormWrapper>
                 <form onSubmit={stopSubmit} encType="multipart/form-data" name="hamster-form">
@@ -108,8 +132,6 @@ const Upload = () => {
                             value={food} />
                         <span className={"age-error " + foodClass}>{foodErr}</span> 
                     </StyledInputDiv>
-                {/* </form>
-                <form encType="multipart/form-data" name="imageform"> */}
                     <StyledInputDiv>
                         <label> <p>Select a JPG file from your unit </p> </label>
                         {/* <input type="text" placeholder="ImageURL or select a file" name="image" /> */}
@@ -147,8 +169,8 @@ const validateTextInput = (input) => {
 }
 const validateNumberInput = (input) => {
     const allowedSymbols = /^[0-9]+$/;
-    if (input === '')  return ['invalid','Must be filled in']
-    if (!input.match(allowedSymbols)) return ['invalid','May only contain numbers']
+    if (isNaN(input)) return ['invalid','May only contain numbers']
+    if (!input.match(allowedSymbols))  return ['invalid','Must be filled in']
     else {
         // setAgeIsValid(true)
         return ['valid','Good!']

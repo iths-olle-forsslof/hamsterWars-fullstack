@@ -66,9 +66,7 @@ const Battles = () => {
         let updatedWinner = { ...winner, wins: 1, defeats: 0}
         let updatedLoser = { ...loser, wins: 0, defeats: 1}
         let updatedMatchData = handleMatchData(updatedWinner, updatedLoser)
-        // let updateWinner =  await updateContestant(updatedWinner)
-        // let updateLoser = await updateContestant(updatedLoser)
-        // let updateMatchStats = await postMatchData(updatedMatchData)
+
         Promise.all([ updateContestant(updatedWinner),  updateContestant(updatedLoser),  postMatchData(updatedMatchData)])
         .then((data) => {
             setWinner(data[0])
@@ -78,34 +76,6 @@ const Battles = () => {
         .then(() => setDisplayWinner(true))
         .catch(err => console.log(err))
     }
-
-    // const handleClick = async (winner, loser) => {
-    //     try {
-    //         let updatedWinner = { ...winner, wins: 1, defeats: 0}
-    //         let updatedLoser = { ...loser, wins: 0, defeats: 1}
-    //         let updatedMatchData = handleMatchData(updatedWinner, updatedLoser)
-
-    //         const winnerPromise = async (winning) => await updateContestant(winning)
-    //         .then((data) => { updatedWinner = data}).catch(err =>{throw err})
-
-    //         const loserPromise = async (losing) => await updateContestant(losing)
-    //         .then(data => updatedLoser = data).catch(err =>{throw err})
-
-    //         const matchPromise = async (match) => await postMatchData(match)
-    //         .then(data => updatedMatchData = data).catch(err =>{throw err})
-
-    //         await Promise.all([winnerPromise(updatedWinner), loserPromise(updatedLoser), matchPromise(updatedMatchData)])
-    //         .then(() => {
-    //             setWinner(updatedWinner)
-    //             setLoser(updatedLoser)
-    //             setMatchData(updatedMatchData)
-    //         })
-    //         .then(() => setDisplayWinner(true))
-    //         .catch(err => {throw err}) 
-    //     } catch (error) {
-    //         console.log(error)
-    //     }
-    // }
 
     const handleMatchData = (winner, loser) => {
         return {

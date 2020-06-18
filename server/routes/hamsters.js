@@ -198,12 +198,12 @@ router.post('/add', async (req, res) => {
         const fileName = `hamsterImgs/${req.files.image.name}`;
         const file = bucket.file(fileName);
 
-        await imgData.mv(`./uploads/${req.files.image.name}`,  (err) => {
-            if (err) console.log(err)
+        const saveImage = await imgData.mv(`./uploads/${req.files.image.name}`,  (err) => {
+            if (err) console.log('Error saving file in uploadfolder:', err)
             console.log('fileimage saved in upload folder!')
         })
-
-        fs.createReadStream(__dirname + `./../uploads/${req.files.image.name}`)
+    
+        const createStream = fs.createReadStream(__dirname + `./../uploads/${req.files.image.name}`)
         .pipe(file.createWriteStream({
             metadata: {
               contentType: 'image/jpeg',
@@ -213,17 +213,21 @@ router.post('/add', async (req, res) => {
             }
         }))
         .on('error', function(err) {
-            console.log('error createreadstream: ', err)
+            console.log('error create readstream: ', err)
         })
         .on('finish', function() {
             // The file upload is complete.
             console.log('Image uploaded!')
         })
         
-        // fs.unlink(`./uploads/${req.files.image.name}`, (err) => {
-        //     if (err) throw err
-        // })
-
+        Promise.all([saveImage, createStream])
+        .then((data) => {
+            console.log('promiseall data: ',data)
+            fs.unlinkSync(`./uploads/${req.files.image.name}`, (err) => {
+                if (err) throw err
+            })
+        })
+    
         let curHamsterTotal = 0;
         let snapshot = await db.collection('hamsters').get()
         //Räknar alla hamstrar som finns i db
@@ -244,20 +248,16 @@ router.post('/add', async (req, res) => {
         }
         // Sparar den nya hamstern i db och uppdaterar hamsterCount i stats
         db.collection('hamsters').doc().set(newHamster)
-        .then(res.send({msg: `Hamster has been added.`, hamster: newHamster}))
+        .then((console.log ({msg: `Hamster has been added.`, hamster: newHamster})))
         .catch(err => {throw {errmsg:`Error adding hamster`, error: err}})
         .then( db.collection('stats').doc('hamsterCount').set({total: curHamsterTotal + 1}))
         .catch(err => {throw {errmsg:`Error updating hamsterCount`, err: err}})
-        .then(fs.unlink(`./uploads/${req.files.image.name}`, (err) => {
-            if (err) throw err
-        }))
         .then(() => console.log('Image removed from temp directory'))
-
+        .then(res.send(newHamster))
     }
     catch (err) {
         console.log(err)
         res.status(500).send('Problem adding hamster: ', err)
-        
     }
 })
 

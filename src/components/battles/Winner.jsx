@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components'
 
 const Winner = ({winner, winnerImg, playAgain}) => {
-    console.log('winner i winner: ', winner)
     return (
         <StyledContainer>
             <StyledCardWrapper >
@@ -33,10 +32,6 @@ const StyledContainer = styled.main`
     display: grid;
     grid-template-rows: auto auto auto;
     grid-template-columns: repeat (1fr, 9);
-    
-    /* @media (max-width: 800px) {
-        flex-direction: row;
-    } */
 `
 
 const StyledCardWrapper = styled.div`
@@ -112,7 +107,7 @@ const StyledInfo = styled.div`
         border: 1px solid var(--black);
 
         & li {
-            margin: 1em;
+            margin: .5em;
         }
     }
 

@@ -1,0 +1,44 @@
+.Success {
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    background-color: rgba(0,0,0,.5);
+    width: 100vw;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+}
+
+.Success p {
+    padding: .5em 1em;
+    cursor: pointer;
+}
+
+.Success h2 {
+    padding: 2em;
+}
+
+.success-hidden {
+    display: none;
+}
+
+ul {
+    list-style: none;
+    padding: 1em;
+}
+
+li {
+    padding: 1em;
+}
+
+.upload-info {
+    display: flex;
+    flex-flow: column wrap;
+    background-color: var(--white);
+    border: var(--thin-border);
+    border-radius: .5em;
+    max-width: 400px;
+
+}
