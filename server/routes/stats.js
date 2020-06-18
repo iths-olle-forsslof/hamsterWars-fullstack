@@ -34,7 +34,7 @@ router.put('/totalGames/reset', async (req, res) => {
 router.get('/contestants', async (req, res) => {
     try{
         let snapshot = await db.collection('stats').doc('hamsterCount').get()
-        res.send({msg: `Number of hamsters competing in the war: ${snapshot.data().total}`})
+        res.send({msg: snapshot.data().total})
      }
     catch(err) {
         console.log(err)

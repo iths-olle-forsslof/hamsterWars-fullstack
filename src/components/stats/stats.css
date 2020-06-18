@@ -1,0 +1,17 @@
+.stats-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.stats {
+    display: flex;
+    flex-direction: column;
+    padding: 1em;
+    background-color: white;
+    border: var(--thin-border);
+    max-width: 400px;
+    width: 100%;
+    margin: 1em;
+}
